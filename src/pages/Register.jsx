@@ -1,3 +1,4 @@
+// src/pages/Register.jsx
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../userContext/AuthContext';
@@ -23,10 +24,7 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const validate = () => {
@@ -50,8 +48,6 @@ const Register = () => {
         navigate('/operatorHome');
         break;
       case 'wardAdmin':
-        navigate('/adminHome');
-        break;
       case 'superAdmin':
         navigate('/adminHome');
         break;
@@ -63,12 +59,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-
     if (!validate()) return;
 
     setLoading(true);
     try {
-      const res = await register(form); // register returns { user, token }
+      const res = await register(form); // expects { user, token }
       redirectUser(res.user.role);
     } catch (err) {
       setErrorMsg(err.message || 'Registration failed');
@@ -97,7 +92,7 @@ const Register = () => {
         {errors.password && <span className="error">{errors.password}</span>}
 
         <label>Phone</label>
-        <input type="number" name="phone" value={form.phone} onChange={handleChange} placeholder="Optional" />
+        <input type="text" name="phone" value={form.phone} onChange={handleChange} placeholder="Optional" />
         {errors.phone && <span className="error">{errors.phone}</span>}
 
         <label>Role</label>

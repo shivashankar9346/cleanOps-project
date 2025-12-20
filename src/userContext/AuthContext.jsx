@@ -1,5 +1,6 @@
+// src/userContext/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser } from '../server/server';
+import { api } from '../server/server'; 
 
 const AuthContext = createContext();
 
@@ -15,8 +16,7 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   const login = async (email, password) => {
-    const res = await loginUser({ email, password });
-    // assume res = { user, token }
+    const res = await api.post('/auth/login', { email, password });
     localStorage.setItem('user', JSON.stringify(res.user));
     localStorage.setItem('token', res.token);
     setUser(res.user);
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (formData) => {
-    const res = await registerUser(formData);
+    const res = await api.post('/auth/register', formData);
     localStorage.setItem('user', JSON.stringify(res.user));
     localStorage.setItem('token', res.token);
     setUser(res.user);
