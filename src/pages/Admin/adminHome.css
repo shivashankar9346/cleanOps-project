@@ -1,0 +1,63 @@
+/* ===========================
+   MAIN CONTAINER
+=========================== */
+.admin-home {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+/* ===========================
+   CARDS
+=========================== */
+.admin-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+  transition: 0.3s ease;
+  border-left: 6px solid #007bff;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* ===========================
+   TITLES & TEXT
+=========================== */
+.admin-card h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+  color: #222;
+}
+
+.admin-card p {
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* ===========================
+   BUTTON LINK
+=========================== */
+.admin-btn {
+  display: inline-block;
+  padding: 12px 22px;
+  background: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.admin-btn:hover {
+  background: #0056b3;
+}
