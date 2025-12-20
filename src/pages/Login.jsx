@@ -1,34 +1,98 @@
-import React from 'react'
-import { NavLink , useNavigate } from 'react-router-dom'
-import './Login.css'
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../userContext/AuthContext';
+import './Login.css';
 
-const Login = ({onLogin}) => {
+const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-    const navigate = useNavigate();
+  const [form, setForm] = useState({
+    email: '',
+    password: ''
+  });
 
-     const handleLogin = (e) => {
+  const [errors, setErrors] = useState({});
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.email.trim()) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Email is invalid';
+    if (!form.password) newErrors.password = 'Password is required';
+    else if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const redirectUser = (role) => {
+    switch(role) {
+      case 'citizen':
+        navigate('/submitRequest');
+        break;
+      case 'operator':
+        navigate('/operatorHome');
+        break;
+      case 'wardAdmin':
+        navigate('/adminHome');
+        break;
+      case 'superAdmin':
+        navigate('/adminHome');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg('');
 
-     onLogin();
+    if (!validate()) return;
 
-       navigate("/submit");
+    setLoading(true);
+    try {
+      const res = await login(form.email, form.password); // login returns { user, token }
+      redirectUser(res.user.role);
+    } catch (err) {
+      setErrorMsg(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="login-container">
-        <form action="">
-            <h1>Welcome Back</h1>
-            <label htmlFor="">Email</label>
-            <input type="email" placeholder='Enter Your Email' />
+    <div className='login-form'>
+      <form onSubmit={handleSubmit}>
+        <h1>Welcome Back</h1>
 
-               <label htmlFor="">Password</label>
-            <input type="password" placeholder='Enter Your Password' />
+        {errorMsg && <div className="error">{errorMsg}</div>}
 
-            <button onClick={handleLogin}>Login</button>
-            <p>Don't have an account? <NavLink to='/register'>Register Here</NavLink></p>
-        </form>
+        <label>Email</label>
+        <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="your@example.com" required />
+        {errors.email && <span className="error">{errors.email}</span>}
+
+        <label>Password</label>
+        <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Minimum 6 Characters" required />
+        {errors.password && <span className="error">{errors.password}</span>}
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+
+        <p>
+          Don't have an account? <NavLink to="/register">Register here</NavLink>
+        </p>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

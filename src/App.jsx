@@ -1,73 +1,102 @@
-import React, { useState } from 'react'
-import Navbar from './pages/Navbar'
+import React from 'react'
+import Navbar from './pages/navbar'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import SubmitRequest from './pages/Citizen/submitRequest'
-import { createBrowserRouter, RouterProvider ,Navigate} from 'react-router-dom'
 import AdminHome from './pages/Admin/adminHome'
+import OperatorHome from './pages/Operator/operatorHome'
+import AdminDashboard from './pages/Admin/adminDashboard'
+import AdminAnalytics from './pages/Admin/adminAnalytics'
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate
+} from 'react-router-dom'
+import { useAuth } from './userContext/AuthContext'
 
 const App = () => {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
-
+  const { isLoggedIn } = useAuth()
 
   const router = createBrowserRouter([
     {
       path: "/",
-      element:
-        <div>
+      element: (
+        <>
           <Navbar />
           <Home />
-        </div>
+        </>
+      )
     },
     {
-      path: '/register',
-      element:
-        <div>
+      path: "/register",
+      element: (
+        <>
           <Navbar />
           <Register />
-        </div>
+        </>
+      )
     },
     {
-      path: '/login',
-      element:
-        <div>
+      path: "/login",
+      element: (
+        <>
           <Navbar />
-          <Login onLogin={handleLoginSuccess} />
-        </div>
+          <Login />
+        </>
+      )
     },
     {
-      path: '/submit',
-      element:
-        isLoggedIn ? (
-          <div>
-            <Navbar />
-            <SubmitRequest />
-          </div>
-        ) : (
-          <Navigate to="/login" replace />
-        )
-    }, {
-      path: '/adminHome',
-      element:
-        <div>
+      path: "/submitRequest",
+      element: isLoggedIn ? (
+        <>
           <Navbar />
-          <Home />
+          <SubmitRequest />
+        </>
+      ) : (
+        <Navigate to="/login" replace />
+      )
+    },
+    {
+      path: "/adminHome",
+      element: (
+        <>
+          <Navbar />
           <AdminHome />
-        </div>
-
+        </>
+      )
+    },
+    {
+      path: "/operatorHome",
+      element: (
+        <>
+        <Navbar/>
+        <OperatorHome/>
+        </>
+      )
+    },{
+      path : "/adminDashboard",
+      element: (
+        <>
+        <Navbar/>
+        <AdminDashboard/>
+        </>
+      )
+    },
+    {
+      path : "/adminAnalytics",
+      element: (
+        <>
+        <Navbar/>
+        <AdminAnalytics/>
+        </>
+      )
     }
+
   ])
 
-  return (
-    <RouterProvider router={router} />
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App

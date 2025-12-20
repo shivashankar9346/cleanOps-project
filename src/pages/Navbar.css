@@ -60,23 +60,68 @@
   color: white;
 }
 
-/* Responsive (mobile) */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 20px;
-  }
-
-  .nav-links, .auth-links {
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .nav-item, .register-btn {
-    width: 100%;
-    text-align: center;
-  }
+/* Logout button style */
+.logout-btn {
+  background-color: #ef4444; /* Red */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+.logout-btn:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+
+/* Citizen-specific buttons */
+.nav-links .nav-item[href="/submit"],
+.nav-links .nav-item[href="/my-requests"] {
+  background-color: #22c55e; /* Green */
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.nav-links .nav-item[href="/submit"]:hover,
+.nav-links .nav-item[href="/my-requests"]:hover {
+  background-color: #16a34a;
+}
+
+/* Operator-specific button */
+.nav-links .nav-item[href="/operator/assigned"] {
+  background-color: #facc15; /* Yellow */
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: #1f2937; /* Dark text for contrast */
+  transition: background-color 0.3s ease;
+}
+
+.nav-links .nav-item[href="/operator/assigned"]:hover {
+  background-color: #eab308;
+}
+
+/* Admin Dashboard button */
+.nav-links .nav-item[href="/admin/dashboard"] {
+  background-color: #6366f1; /* Indigo */
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.nav-links .nav-item[href="/admin/dashboard"]:hover {
+  background-color: #4f46e5;
+}
+
+/* Smooth transition for all nav-items */
+.nav-item, .register-btn, .login-btn {
+  transition: all 0.3s ease;
+}
+
+
+

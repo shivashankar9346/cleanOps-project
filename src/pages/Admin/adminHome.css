@@ -1,18 +1,73 @@
 /* ===========================
-   MAIN CONTAINER
+   MAIN PAGE STYLING
 =========================== */
-.admin-home {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 25px;
-  font-family: "Poppins", Arial, sans-serif;
+.admin-home-container {
+  padding: 40px;
+  background-color: #f8fafc; /* Light background */
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b; /* Dark text */
+}
+
+/* Header Section */
+.admin-home-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.admin-home-header h1 {
+  font-size: 2.2rem;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.admin-home-header h3 {
+  font-size: 1rem;
+  color: #334155;
+}
+
+/* Welcome Card */
+.admin-welcome-card {
+  max-width: 600px;
+  margin: 0 auto 40px;
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-welcome-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.admin-welcome-card p {
+  font-size: 1.1rem;
+  margin: 10px 0;
+}
+
+/* Highlight username */
+.admin-welcome-card .username {
+  color: #0ea5e9; /* Light blue */
+  font-weight: 600;
 }
 
 /* ===========================
-   CARDS
+   ADMIN CARDS GRID
+=========================== */
+.admin-home {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  padding: 0 20px;
+}
+
+/* ===========================
+   INDIVIDUAL ADMIN CARD
 =========================== */
 .admin-card {
   background: #ffffff;
@@ -28,9 +83,6 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
-/* ===========================
-   TITLES & TEXT
-=========================== */
 .admin-card h2 {
   margin-bottom: 10px;
   font-size: 22px;
@@ -56,8 +108,27 @@
   text-decoration: none;
   font-weight: 600;
   transition: 0.3s ease;
+  cursor: not-allowed; /* Since disabled */
 }
 
 .admin-btn:hover {
   background: #0056b3;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+  .admin-home-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .admin-welcome-card {
+    padding: 20px;
+  }
+
+  .admin-home {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }
