@@ -1,5 +1,5 @@
 import React from 'react'
-import Navbar from './pages/navbar'
+import Navbar from './pages/Navbar'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
