@@ -19,7 +19,7 @@ const Home = () => {
         <div className="home-card">
           <h2>Raise Request</h2>
           <h4>Submit a desludging request in under a minute.</h4>
-          <NavLink to="/submit" className="home-btn">
+          <NavLink to="/submitRequest" className="home-btn">
             Submit Now
           </NavLink>
         </div>

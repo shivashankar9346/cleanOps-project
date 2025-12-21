@@ -1,18 +1,32 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import './Navbar.css';
-import { useAuth } from '../userContext/AuthContext';
+import React from "react";
+import {
+  NavLink,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import "./Navbar.css";
+import { useAuth } from "../userContext/AuthContext";
 
 const Navbar = () => {
-  const { user, isLoggedIn, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const role = user?.role?.toLowerCase();
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login", { replace: true });
   };
 
-  const role = user?.role?.toLowerCase();
+  // 🔹 ROLE HOME PATH
+  const getRoleHome = () => {
+    if (role === "citizen") return "/submitRequest";
+    if (role === "operator") return "/operatorHome";
+    if (role === "admin" || role === "wardadmin" || role === "superadmin")
+      return "/adminHome";
+    return "/";
+  };
 
   return (
     <nav className="navbar">
@@ -23,46 +37,95 @@ const Navbar = () => {
 
       {/* NAV LINKS */}
       <div className="nav-links">
-        <NavLink to="/" className="nav-item">Home</NavLink>
+        {/* 🔹 NORMAL HOME (ONLY WHEN NOT LOGGED IN) */}
+        {!user && (
+          <NavLink to="/" end className="nav-item">
+            Home
+          </NavLink>
+        )}
+
+        {/* 🔹 ROLE HOME (ONLY WHEN LOGGED IN) */}
+        {user && (
+          <NavLink
+            to={getRoleHome()}
+            className={`nav-item ${
+              location.pathname.startsWith(getRoleHome())
+                ? "active"
+                : ""
+            }`}
+          >
+            {role === "citizen" && "Citizen Home"}
+            {role === "operator" && "Operator Home"}
+            {(role === "admin" ||
+              role === "wardadmin" ||
+              role === "superadmin") &&
+              "Admin Home"}
+          </NavLink>
+        )}
+
+        {/* COMMUNITY */}
+        <NavLink to="/community" end className="nav-item">
+          Community
+        </NavLink>
 
         {/* CITIZEN */}
-        {isLoggedIn && role === 'citizen' && (
+        {user && role === "citizen" && (
           <>
-            <NavLink to="/submit" className="nav-item">Submit Request</NavLink>
-            <NavLink to="/my-requests" className="nav-item">My Requests</NavLink>
+            <NavLink to="/raise-request" end className="nav-item">
+              Raise Request
+            </NavLink>
+            <NavLink to="/my-requests" end className="nav-item">
+              My Requests
+            </NavLink>
           </>
         )}
 
         {/* OPERATOR */}
-        {isLoggedIn && role === 'operator' && (
-          <NavLink to="/operator/assigned" className="nav-item">
-            Assigned Requests
+        {user && role === "operator" && (
+          <NavLink to="/operator/assigned" end className="nav-item">
+            Assigned
           </NavLink>
         )}
 
-        {/* WARD ADMIN & SUPER ADMIN */}
-        {isLoggedIn && (role === 'wardadmin' || role === 'superadmin') && (
-          <>
-            <NavLink to="/adminDashboard" className="nav-item">Dashboard</NavLink>
-            <NavLink to="/adminAnalytics" className="nav-item">Analytics</NavLink>
-            <NavLink to="/operators" className="nav-item">Operators</NavLink>
-          </>
-        )}
-
-        <NavLink to="/community" className="nav-item">Community</NavLink>
+        {/* ADMIN */}
+        {user &&
+          (role === "admin" ||
+            role === "wardadmin" ||
+            role === "superadmin") && (
+            <>
+              <NavLink to="/admin/dashboard" end className="nav-item">
+                Dashboard
+              </NavLink>
+              <NavLink to="/admin/analytics" end className="nav-item">
+                Analytics
+              </NavLink>
+              <NavLink to="/admin/operators" end className="nav-item">
+                Operators
+              </NavLink>
+            </>
+          )}
       </div>
 
-      {/* AUTH BUTTONS */}
+      {/* AUTH */}
       <div className="auth-links">
-        {!isLoggedIn ? (
+        {!user ? (
           <>
-            <NavLink to="/login" className="nav-item login-btn">Login</NavLink>
-            <NavLink to="/register" className="nav-item register-btn">Register</NavLink>
+            <NavLink to="/login" end className="nav-item login-btn">
+              Login
+            </NavLink>
+            <NavLink to="/register" end className="nav-item register-btn">
+              Register
+            </NavLink>
           </>
         ) : (
-          <button className="nav-item logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
+          <>
+            <span className="user-info">
+              {user.name} ({user.role})
+            </span>
+            <button className="nav-item logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>

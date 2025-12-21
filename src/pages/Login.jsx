@@ -1,94 +1,106 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../userContext/AuthContext';
-import './Login.css';
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../userContext/AuthContext";
+import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const [form, setForm] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!form.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = 'Email is invalid';
-    if (!form.password) newErrors.password = 'Password is required';
-    else if (form.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(form.email))
+      newErrors.email = "Invalid email";
+
+    if (!form.password) newErrors.password = "Password is required";
+    else if (form.password.length < 6)
+      newErrors.password = "Minimum 6 characters";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const redirectUser = (role) => {
-    switch(role) {
-      case 'citizen':
-        navigate('/submitRequest');
+    switch (role) {
+      case "citizen":
+        navigate("/submitRequest");
         break;
-      case 'operator':
-        navigate('/operatorHome');
+      case "operator":
+        navigate("/operator/home");
         break;
-      case 'wardAdmin':
-        navigate('/adminHome');
-        break;
-      case 'superAdmin':
-        navigate('/adminHome');
+      case "wardAdmin":
+      case "superAdmin":
+        navigate("/admin/home");
         break;
       default:
-        navigate('/');
+        navigate("/");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg('');
+    setErrorMsg("");
 
     if (!validate()) return;
 
     setLoading(true);
     try {
-      const res = await login(form.email, form.password); // login returns { user, token }
-      redirectUser(res.user.role);
+      const user = await login(form.email, form.password); // ✅ user object
+      redirectUser(user.role); // ✅ DIRECT ROLE
     } catch (err) {
-      setErrorMsg(err.message || 'Login failed');
+      setErrorMsg(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className='login-form'>
+    <div className="login-form">
       <form onSubmit={handleSubmit}>
         <h1>Welcome Back</h1>
 
         {errorMsg && <div className="error">{errorMsg}</div>}
 
         <label>Email</label>
-        <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="your@example.com" required />
+        <input
+          type="email"
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+        />
         {errors.email && <span className="error">{errors.email}</span>}
 
         <label>Password</label>
-        <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Minimum 6 Characters" required />
+        <input
+          type="password"
+          name="password"
+          value={form.password}
+          onChange={handleChange}
+        />
         {errors.password && <span className="error">{errors.password}</span>}
 
         <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <p>
-          Don't have an account? <NavLink to="/register">Register here</NavLink>
+          Don’t have an account? <NavLink to="/register">Register</NavLink>
         </p>
       </form>
     </div>

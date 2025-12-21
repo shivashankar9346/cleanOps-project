@@ -45,11 +45,11 @@ const Register = () => {
         navigate('/submitRequest');
         break;
       case 'operator':
-        navigate('/operatorHome');
+        navigate('/operator/home');
         break;
       case 'wardAdmin':
       case 'superAdmin':
-        navigate('/adminHome');
+        navigate('/admin/home');
         break;
       default:
         navigate('/');

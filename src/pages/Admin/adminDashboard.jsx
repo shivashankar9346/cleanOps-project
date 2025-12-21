@@ -1,3 +1,4 @@
+// src/pages/admin/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { api } from "../../server/server"; // adjust path
 import "./AdminDashboard.css";
@@ -33,19 +34,20 @@ const AdminDashboard = () => {
   };
 
   // 🔹 Load requests
-  const loadRequests = async () => {
-    setLoading(true);
-    try {
-      const query = `?ward=${filters.ward}&status=${filters.status}&wasteType=${filters.wasteType}`;
-      const data = await api.get("/requests" + query);
-      setRequests(data.data || []);
-    } catch (err) {
-      console.error("Error loading requests:", err.message);
-      setRequests([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+const loadRequests = async () => {
+  setLoading(true);
+  try {
+    const query = `?ward=${filters.ward}&status=${filters.status}&wasteType=${filters.wasteType}`;
+    const data = await api.get("/requests" + query);
+    console.log("Fetched requests:", data); // check structure
+    setRequests(data.data || data || []);
+  } catch (err) {
+    console.error("Error loading requests:", err.message);
+    setRequests([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadSummary();
@@ -53,7 +55,13 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     loadRequests();
-  }, [filters]); // refetch when filters change
+  }, [filters]);
+
+  // Optional: Refresh manually
+  const handleRefresh = () => {
+    loadSummary();
+    loadRequests();
+  };
 
   return (
     <div className="admin-dashboard">
@@ -88,7 +96,11 @@ const AdminDashboard = () => {
           <option>All</option>
           <option>Ward 1</option>
           <option>Ward 2</option>
+          <option>Ward 3</option>
+          <option>Ward 4</option>
+          <option>Ward 5</option>
         </select>
+
         <select
           value={filters.status}
           onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -98,6 +110,7 @@ const AdminDashboard = () => {
           <option>In Progress</option>
           <option>Completed</option>
         </select>
+
         <select
           value={filters.wasteType}
           onChange={(e) =>
@@ -108,7 +121,10 @@ const AdminDashboard = () => {
           <option>Household</option>
           <option>Sewage</option>
           <option>Industrial</option>
+          <option>Other</option>
         </select>
+
+        <button onClick={handleRefresh}>Refresh</button>
       </div>
 
       {/* Requests table */}

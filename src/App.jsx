@@ -59,7 +59,7 @@ const App = () => {
       )
     },
     {
-      path: "/adminHome",
+      path: "/admin/home",
       element: (
         <>
           <Navbar />
@@ -68,7 +68,7 @@ const App = () => {
       )
     },
     {
-      path: "/operatorHome",
+      path: "/operator/home",
       element: (
         <>
         <Navbar/>
@@ -76,7 +76,7 @@ const App = () => {
         </>
       )
     },{
-      path : "/adminDashboard",
+      path : "/admin/dashboard",
       element: (
         <>
         <Navbar/>
