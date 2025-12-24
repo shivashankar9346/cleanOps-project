@@ -1,25 +1,33 @@
-import React from 'react'
-import Navbar from './pages/Navbar'
-import Home from './pages/Home'
-import Register from './pages/Register'
-import Login from './pages/Login'
-import SubmitRequest from './pages/Citizen/submitRequest'
-import AdminHome from './pages/Admin/adminHome'
-import OperatorHome from './pages/Operator/operatorHome'
-import AdminDashboard from './pages/Admin/adminDashboard'
-import AdminAnalytics from './pages/Admin/adminAnalytics'
+import React from "react";
+import Navbar from "./pages/Navbar";
+import Home from "./pages/Home";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+
+import SubmitRequest from "./pages/Citizen/submitRequest";
+import AdminHome from "./pages/Admin/adminHome";
+import OperatorHome from "./pages/Operator/operatorHome";
+import AdminDashboard from "./pages/Admin/adminDashboard";
+import AdminAnalytics from "./pages/Admin/adminAnalytics";
+
+import CommunityList from "./pages/community/CommunityList";
+import CommunityDetails from "./pages/community/CommunityDetails";
+import CommunityCreate from "./pages/community/CommunityCreate";
+
 import {
   createBrowserRouter,
   RouterProvider,
-  Navigate
-} from 'react-router-dom'
-import { useAuth } from './userContext/AuthContext'
+  Navigate,
+} from "react-router-dom";
+
+import { useAuth } from "./userContext/AuthContext";
 
 const App = () => {
-
-  const { isLoggedIn } = useAuth()
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
 
   const router = createBrowserRouter([
+    /* ---------------- PUBLIC ---------------- */
     {
       path: "/",
       element: (
@@ -27,7 +35,7 @@ const App = () => {
           <Navbar />
           <Home />
         </>
-      )
+      ),
     },
     {
       path: "/register",
@@ -36,7 +44,7 @@ const App = () => {
           <Navbar />
           <Register />
         </>
-      )
+      ),
     },
     {
       path: "/login",
@@ -45,58 +53,109 @@ const App = () => {
           <Navbar />
           <Login />
         </>
-      )
+      ),
+    },
+
+    /* ---------------- COMMUNITY ---------------- */
+    {
+      path: "/community",
+      element: (
+        <>
+          <Navbar />
+          <CommunityList />
+        </>
+      ),
     },
     {
-      path: "/submitRequest",
+      path: "/community/:id",
+      element: (
+        <>
+          <Navbar />
+          <CommunityDetails />
+        </>
+      ),
+    },
+    {
+      path: "/community/create",
       element: isLoggedIn ? (
+        <>
+          <Navbar />
+          <CommunityCreate />
+        </>
+      ) : (
+        <Navigate to="/login" replace />
+      ),
+    },
+
+    /* ---------------- CITIZEN ---------------- */
+    {
+      path: "/submitRequest",
+      element: isLoggedIn && user?.role === "citizen" ? (
         <>
           <Navbar />
           <SubmitRequest />
         </>
       ) : (
         <Navigate to="/login" replace />
-      )
+      ),
     },
-    {
-      path: "/admin/home",
-      element: (
-        <>
-          <Navbar />
-          <AdminHome />
-        </>
-      )
-    },
+
+    /* ---------------- OPERATOR ---------------- */
     {
       path: "/operator/home",
-      element: (
+      element: isLoggedIn && user?.role === "operator" ? (
         <>
-        <Navbar/>
-        <OperatorHome/>
+          <Navbar />
+          <OperatorHome />
         </>
-      )
-    },{
-      path : "/admin/dashboard",
-      element: (
-        <>
-        <Navbar/>
-        <AdminDashboard/>
-        </>
-      )
+      ) : (
+        <Navigate to="/login" replace />
+      ),
+    },
+
+    /* ---------------- ADMIN ---------------- */
+    {
+      path: "/admin/home",
+      element:
+        isLoggedIn &&
+        (user?.role === "wardAdmin" || user?.role === "superAdmin") ? (
+          <>
+            <Navbar />
+            <AdminHome />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
     },
     {
-      path : "/adminAnalytics",
-      element: (
-        <>
-        <Navbar/>
-        <AdminAnalytics/>
-        </>
-      )
-    }
+      path: "/admin/dashboard",
+      element:
+        isLoggedIn &&
+        (user?.role === "wardAdmin" || user?.role === "superAdmin") ? (
+          <>
+            <Navbar />
+            <AdminDashboard />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
+    },
+    {
+      path: "/admin/analytics",
+      element:
+        isLoggedIn &&
+        (user?.role === "wardAdmin" || user?.role === "superAdmin") ? (
+          <>
+            <Navbar />
+            <AdminAnalytics />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
+    },
+  ]);
 
-  ])
+  return <RouterProvider router={router} />;
+};
 
-  return <RouterProvider router={router} />
-}
-
-export default App
+export default App;

@@ -1,10 +1,10 @@
-/* NAVBAR CONTAINER */
+/* ================= NAVBAR CONTAINER ================= */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #0f172a;
-  color: white;
+  color: #ffffff;
   padding: 15px 40px;
   position: sticky;
   top: 0;
@@ -12,14 +12,16 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* LOGO */
-.logo h2 {
+/* ================= LOGO / BRAND ================= */
+.logo .brand {
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.5px;
+  text-decoration: none;
+  color: #38bdf8;
 }
 
-/* NAV SECTIONS */
+/* ================= NAV SECTIONS ================= */
 .nav-links,
 .auth-links {
   display: flex;
@@ -27,27 +29,28 @@
   gap: 22px;
 }
 
-/* NAV ITEM */
+/* ================= NAV ITEM ================= */
 .nav-item {
   text-decoration: none;
   color: #e2e8f0;
   font-weight: 500;
   padding: 6px 10px;
   transition: all 0.3s ease;
+  border-radius: 5px;
 }
 
-/* HOVER */
+/* ================= HOVER ================= */
 .nav-item:hover {
   color: #38bdf8;
 }
 
-/* ACTIVE */
+/* ================= ACTIVE LINK ================= */
 .nav-item.active {
   color: #38bdf8;
   border-bottom: 2px solid #38bdf8;
 }
 
-/* LOGIN & REGISTER */
+/* ================= LOGIN & REGISTER ================= */
 .login-btn,
 .register-btn {
   padding: 8px 16px;
@@ -58,14 +61,21 @@
 .login-btn:hover,
 .register-btn:hover {
   background-color: #0ea5e9;
-  color: white;
+  color: #ffffff;
 }
 
-/* LOGOUT */
+/* ================= USER INFO ================= */
+.user-info {
+  color: #c7f9cc;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* ================= LOGOUT ================= */
 .logout-btn {
   background-color: #ef4444;
   border: none;
-  color: white;
+  color: #ffffff;
   padding: 8px 16px;
   border-radius: 6px;
   font-weight: 600;
@@ -78,31 +88,4 @@
   transform: scale(1.05);
 }
 
-/* OPERATOR ASSIGNED */
-.nav-links .nav-item[href="/operator/assigned"] {
-  background-color: #facc15;
-  border-radius: 5px;
-  color: #1f2937;
-}
 
-.nav-links .nav-item[href="/operator/assigned"]:hover {
-  background-color: #eab308;
-}
-
-/* ADMIN DASHBOARD */
-.nav-links .nav-item[href="/admin/dashboard"] {
-  background-color: #6366f1;
-  border-radius: 5px;
-  color: white;
-}
-
-.nav-links .nav-item[href="/admin/dashboard"]:hover {
-  background-color: #4f46e5;
-}
-
-/* SMOOTH */
-.nav-item,
-.login-btn,
-.register-btn {
-  transition: all 0.3s ease;
-}

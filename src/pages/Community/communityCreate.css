@@ -1,0 +1,137 @@
+/* ROOT FORM */
+.community-create {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #0f172a;
+  border-radius: 14px;
+  color: #e5e7eb;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* TITLE */
+.community-create h1 {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: #38bdf8;
+  margin-bottom: 28px;
+}
+
+/* ALERTS */
+.community-create .success {
+  background: #064e3b;
+  color: #6ee7b7;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.community-create .error {
+  background: #7f1d1d;
+  color: #fecaca;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+/* INPUTS */
+.community-create input,
+.community-create textarea,
+.community-create select {
+  width: 100%;
+  padding: 12px 14px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+}
+
+/* PLACEHOLDER */
+.community-create input::placeholder,
+.community-create textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* FOCUS */
+.community-create input:focus,
+.community-create textarea:focus,
+.community-create select:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px #38bdf8;
+}
+
+/* DESCRIPTION COUNTER */
+.community-create small {
+  display: block;
+  text-align: right;
+  font-size: 0.8rem;
+  margin-top: -6px;
+  margin-bottom: 18px;
+  color: #94a3b8;
+}
+
+/* GRID LAYOUT */
+.community-create .grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* FILE INPUT */
+.community-create input[type="file"] {
+  padding: 12px;
+  border: 1px dashed #334155;
+  background: #020617;
+  cursor: pointer;
+}
+
+/* FILE BUTTON */
+.community-create input[type="file"]::-webkit-file-upload-button {
+  background: #1e293b;
+  color: #e5e7eb;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.community-create input[type="file"]::-webkit-file-upload-button:hover {
+  background: #334155;
+}
+
+/* SUBMIT BUTTON */
+.community-create button {
+  margin-top: 26px;
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: #020617;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.community-create button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(56, 189, 248, 0.45);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .community-create {
+    margin: 20px;
+    padding: 24px;
+  }
+
+  .community-create .grid {
+    grid-template-columns: 1fr;
+  }
+}

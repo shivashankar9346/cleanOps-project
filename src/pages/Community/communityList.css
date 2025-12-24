@@ -1,0 +1,43 @@
+.community-list {
+  padding: 40px;
+}
+
+.community-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-btn {
+  background: #0ea5e9;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.project-list {
+  list-style: none;
+  margin-top: 30px;
+  padding: 0;
+}
+
+.project-item {
+  background: #f8fafc;
+  margin-bottom: 15px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.project-item a {
+  text-decoration: none;
+  color: #0f172a;
+}
+
+.chip {
+  background: #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-right: 8px;
+  font-size: 12px;
+}
