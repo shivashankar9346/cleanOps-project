@@ -5,10 +5,14 @@ export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem("token");
 
   const headers = {
-    "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
+
+  // ✅ Add Content-Type ONLY if body exists
+  if (options.body) {
+    headers["Content-Type"] = "application/json";
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
@@ -16,8 +20,8 @@ export async function apiFetch(path, options = {}) {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "API Error");
+    const text = await response.text();
+    throw new Error(text || "API Error");
   }
 
   return response.json();
