@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { api } from "../../server/api";
-import "./SubmitRequest.css";
+import "./submitRequest.css";
 
 const SubmitRequest = () => {
   const [formData, setFormData] = useState({
