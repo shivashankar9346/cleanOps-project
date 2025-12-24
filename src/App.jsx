@@ -125,18 +125,6 @@ const App = () => {
     },
 
     /* ---------------- OPERATOR ---------------- */
-    //  {
-    //   path: "/operator/home",
-    //   element:
-    //     isLoggedIn && user?.role === "operator" ? (
-    //       <>
-    //         <Navbar />
-    //         <OperatorAssigned />
-    //       </>
-    //     ) : (
-    //       <Navigate to="/login" replace />
-    //     ),
-    // },
     {
       path: "/operator/assigned",
       element:

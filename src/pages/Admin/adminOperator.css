@@ -1,0 +1,143 @@
+/* adminOperators.css */
+
+.admin-operators {
+  padding: 24px;
+  max-width: 1200px;
+  margin: auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admin-operators h1 {
+  margin-bottom: 16px;
+  font-size: 26px;
+  color: #1f2937;
+}
+
+/* Messages */
+.success {
+  background: #e6fffa;
+  color: #065f46;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #99f6e4;
+}
+
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #fecaca;
+}
+
+/* Layout */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Form */
+.operator-form {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.operator-form input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.operator-form input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.operator-form button {
+  padding: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.operator-form button:hover {
+  background: #1d4ed8;
+}
+
+.operator-form button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* List Section */
+.operator-list {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.operator-list input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.operator-list input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Table */
+.operator-list table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.operator-list th,
+.operator-list td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.operator-list th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+}
+
+.operator-list tr:hover {
+  background: #f3f4f6;
+}
+
+/* Empty / Loading */
+.operator-list p {
+  text-align: center;
+  color: #6b7280;
+  padding: 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+}

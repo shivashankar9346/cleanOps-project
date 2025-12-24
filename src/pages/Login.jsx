@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../userContext/AuthContext"; // ✅ corrected path
+import { useAuth } from "../userContext/AuthContext";
 import "./Login.css";
 
 const Login = () => {
@@ -24,12 +24,10 @@ const Login = () => {
 
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // clear field error
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
 
-    // clear global error
     if (error) setError("");
   };
 
@@ -51,15 +49,6 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  /* ================= REDIRECT ================= */
-  const redirectUser = (role) => {
-    if (role === "citizen") navigate("/submitRequest");
-    else if (role === "operator") navigate("/operator/home");
-    else if (role === "wardAdmin" || role === "superAdmin")
-      navigate("/admin/home");
-    else navigate("/");
-  };
-
   /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,8 +58,10 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const user = await login(formData.email, formData.password);
-      redirectUser(user.role);
+      await login(formData.email, formData.password);
+
+      // ✅ ALWAYS GO TO HOME
+      navigate("/");
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {

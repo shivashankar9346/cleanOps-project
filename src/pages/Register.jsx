@@ -65,7 +65,7 @@ const Register = () => {
     else if (role === "operator") navigate("/operator/home");
     else if (role === "wardAdmin" || role === "superAdmin")
       navigate("/admin/home");
-    else navigate("/");
+    else navigate("/");qsd
   };
 
   /* ================= SUBMIT ================= */

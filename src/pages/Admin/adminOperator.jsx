@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { api } from "../../server/api"; // Make sure api is exported as named
-// import "./AdminOperators.css";
+import "./adminOperator.css";
 
 const AdminOperators = () => {
   const [operators, setOperators] = useState([]);
