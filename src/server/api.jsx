@@ -17,9 +17,7 @@ export async function apiFetch(path, options = {}) {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `API Error (${response.status}): ${errorText || "Something went wrong"}`
-    );
+    throw new Error(errorText || "API Error");
   }
 
   return response.json();
@@ -45,20 +43,3 @@ export const api = {
       method: "DELETE",
     }),
 };
-
-// 👉 Login API
-export function loginUser({ email, password }) {
-  return api.post("/auth/login", { email, password });
-}
-
-// 👉 Register API
-export function registerUser({ name, email, password, phone, role, ward }) {
-  return api.post("/auth/register", {
-    name,
-    email,
-    password,
-    phone,
-    role,
-    ward,
-  });
-}

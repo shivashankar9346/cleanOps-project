@@ -1,6 +1,5 @@
-// src/pages/admin/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
-import { api } from "../../server/server"; // adjust path
+import { api } from "../../server/api";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
@@ -10,45 +9,58 @@ const AdminDashboard = () => {
     completedToday: 0,
     slaBreaches: 0,
   });
+
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const [filters, setFilters] = useState({
     ward: "All",
     status: "All",
     wasteType: "All",
   });
 
-  // 🔹 Load summary
+  /* =========================
+     Load Summary
+  ========================== */
   const loadSummary = async () => {
     try {
       const data = await api.get("/admin/dashboard");
       setSummary({
-        todayRequests: data.todayRequests || 0,
-        pending: data.pending || 0,
-        completedToday: data.completedToday || 0,
-        slaBreaches: data.slaBreaches || 0,
+        todayRequests: data?.todayRequests ?? 0,
+        pending: data?.pending ?? 0,
+        completedToday: data?.completedToday ?? 0,
+        slaBreaches: data?.slaBreaches ?? 0,
       });
     } catch (err) {
-      console.error("Error loading summary:", err.message);
+      console.error("Summary load failed:", err.message);
     }
   };
 
-  // 🔹 Load requests
-const loadRequests = async () => {
-  setLoading(true);
-  try {
-    const query = `?ward=${filters.ward}&status=${filters.status}&wasteType=${filters.wasteType}`;
-    const data = await api.get("/requests" + query);
-    console.log("Fetched requests:", data); // check structure
-    setRequests(data.data || data || []);
-  } catch (err) {
-    console.error("Error loading requests:", err.message);
-    setRequests([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  /* =========================
+     Load Requests
+  ========================== */
+  const loadRequests = async () => {
+    setLoading(true);
+    try {
+      const query = new URLSearchParams({
+        ward: filters.ward,
+        status: filters.status,
+        wasteType: filters.wasteType,
+      }).toString();
 
+      const data = await api.get(`/admin/requests?${query}`);
+      setRequests(data?.data || data || []);
+    } catch (err) {
+      console.error("Requests load failed:", err.message);
+      setRequests([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================
+     Effects
+  ========================== */
   useEffect(() => {
     loadSummary();
   }, []);
@@ -57,7 +69,9 @@ const loadRequests = async () => {
     loadRequests();
   }, [filters]);
 
-  // Optional: Refresh manually
+  /* =========================
+     Manual Refresh
+  ========================== */
   const handleRefresh = () => {
     loadSummary();
     loadRequests();
@@ -67,48 +81,55 @@ const loadRequests = async () => {
     <div className="admin-dashboard">
       <h2>Admin Dashboard</h2>
 
-      {/* Summary cards */}
+      {/* ================= SUMMARY ================= */}
       <div className="summary-grid">
         <div className="card">
           <p>Today's Requests</p>
           <h3>{summary.todayRequests}</h3>
         </div>
+
         <div className="card">
           <p>Pending</p>
           <h3>{summary.pending}</h3>
         </div>
+
         <div className="card">
           <p>Completed Today</p>
           <h3>{summary.completedToday}</h3>
         </div>
+
         <div className="card danger">
           <p>SLA Breaches</p>
           <h3>{summary.slaBreaches}</h3>
         </div>
       </div>
 
-      {/* Filters */}
+      {/* ================= FILTERS ================= */}
       <div className="filters">
         <select
           value={filters.ward}
-          onChange={(e) => setFilters({ ...filters, ward: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, ward: e.target.value })
+          }
         >
-          <option>All</option>
-          <option>Ward 1</option>
-          <option>Ward 2</option>
-          <option>Ward 3</option>
-          <option>Ward 4</option>
-          <option>Ward 5</option>
+          <option value="All">All Wards</option>
+          <option value="1">Ward 1</option>
+          <option value="2">Ward 2</option>
+          <option value="3">Ward 3</option>
+          <option value="4">Ward 4</option>
+          <option value="5">Ward 5</option>
         </select>
 
         <select
           value={filters.status}
-          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+          onChange={(e) =>
+            setFilters({ ...filters, status: e.target.value })
+          }
         >
-          <option>All</option>
-          <option>Pending</option>
-          <option>In Progress</option>
-          <option>Completed</option>
+          <option value="All">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
         </select>
 
         <select
@@ -117,17 +138,17 @@ const loadRequests = async () => {
             setFilters({ ...filters, wasteType: e.target.value })
           }
         >
-          <option>All</option>
-          <option>Household</option>
-          <option>Sewage</option>
-          <option>Industrial</option>
-          <option>Other</option>
+          <option value="All">All Waste Types</option>
+          <option value="Household">Household</option>
+          <option value="Sewage">Sewage</option>
+          <option value="Industrial">Industrial</option>
+          <option value="Other">Other</option>
         </select>
 
         <button onClick={handleRefresh}>Refresh</button>
       </div>
 
-      {/* Requests table */}
+      {/* ================= TABLE ================= */}
       {loading ? (
         <p>Loading requests...</p>
       ) : requests.length === 0 ? (
@@ -146,12 +167,16 @@ const loadRequests = async () => {
           <tbody>
             {requests.map((req) => (
               <tr key={req._id}>
-                <td>{req.ticketId}</td>
-                <td>{req.fullName || req.name}</td>
+                <td>{req.ticketId || "—"}</td>
+                <td>{req.fullName || req.name || "—"}</td>
                 <td>{req.ward}</td>
                 <td>{req.wasteType}</td>
                 <td>
-                  <span className={`status ${req.status.toLowerCase()}`}>
+                  <span
+                    className={`status ${
+                      req.status ? req.status.toLowerCase() : ""
+                    }`}
+                  >
                     {req.status}
                   </span>
                 </td>

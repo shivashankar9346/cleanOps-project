@@ -1,40 +1,91 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import './Home.css'
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { FiPlusCircle, FiList, FiBarChart2 } from "react-icons/fi";
+import "./Home.css";
+import { useAuth } from "../userContext/AuthContext";
 
 const Home = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const role = user?.role;
+
+  const handleProtectedNav = (path) => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate(path);
+    }
+  };
+
+  const isAdmin = role === "wardAdmin" || role === "superAdmin";
+  const isCitizen = role === "citizen";
+
   return (
     <div className="home-container">
-      {/* Hero Section */}
-      <div className="hero-section">
+      {/* HERO */}
+      <section className="hero-section">
         <h1>Waste Management & Desludging</h1>
         <p>
           Report and track desludging services with ease.
           Make your ward cleaner.
         </p>
-      </div>
+      </section>
 
-      {/* Cards Section */}
-      <div className="cards-container">
-        <div className="home-card">
-          <h2>Raise Request</h2>
-          <h4>Submit a desludging request in under a minute.</h4>
-          <NavLink to="/submitRequest" className="home-btn">
-            Submit Now
-          </NavLink>
-        </div>
+      {/* WELCOME */}
+      {user && (
+        <section className="welcome-card">
+          <h2>
+            Welcome back, {user.name}! ({user.role})
+          </h2>
+          <p>You’re signed in and ready to go.</p>
+        </section>
+      )}
 
-        <div className="home-card">
-          <h2>My Requests</h2>
-          <h4>Track the status of your submitted requests.</h4>
-          {/* Route not built yet, disable for now */}
-          <button className="home-btn" disabled>
-            Coming Soon
-          </button>
-        </div>
-      </div>
+      {/* QUICK ACTIONS */}
+      <section className="cards-container">
+        {/* Citizen / Guest */}
+        {(isCitizen || !user) && (
+          <>
+            <div
+              className="home-card"
+              onClick={() => handleProtectedNav("/raise-request")}
+            >
+              <FiPlusCircle size={32} />
+              <h3>Raise Request</h3>
+              <p>Submit a desludging request quickly.</p>
+            </div>
+
+            <div
+              className="home-card"
+              onClick={() => handleProtectedNav("/my-requests")}
+            >
+              <FiList size={32} />
+              <h3>My Requests</h3>
+              <p>Track your submitted requests.</p>
+            </div>
+          </>
+        )}
+
+        {/* Admin */}
+        {isAdmin && (
+          <>
+            <NavLink to="/admin/dashboard" className="home-card">
+              <FiBarChart2 size={32} />
+              <h3>Admin Dashboard</h3>
+              <p>Monitor ward requests and SLA.</p>
+            </NavLink>
+
+            <NavLink to="/admin/analytics" className="home-card">
+              <FiBarChart2 size={32} />
+              <h3>Admin Analytics</h3>
+              <p>Analyze trends and performance.</p>
+            </NavLink>
+          </>
+        )}
+      </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

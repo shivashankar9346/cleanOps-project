@@ -1,70 +1,78 @@
+// src/pages/Login.jsx
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../userContext/AuthContext";
+import { useAuth } from "../userContext/AuthContext"; // ✅ corrected path
 import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [form, setForm] = useState({
+  /* ================= STATE ================= */
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [errorMsg, setErrorMsg] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  /* ================= CHANGE HANDLER ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // clear field error
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+
+    // clear global error
+    if (error) setError("");
   };
 
-  const validate = () => {
+  /* ================= VALIDATION ================= */
+  const validateForm = () => {
     const newErrors = {};
-    if (!form.email.trim()) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.email))
-      newErrors.email = "Invalid email";
 
-    if (!form.password) newErrors.password = "Password is required";
-    else if (form.password.length < 6)
+    if (!formData.email.trim())
+      newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Invalid email format";
+
+    if (!formData.password)
+      newErrors.password = "Password is required";
+    else if (formData.password.length < 6)
       newErrors.password = "Minimum 6 characters";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  /* ================= REDIRECT ================= */
   const redirectUser = (role) => {
-    switch (role) {
-      case "citizen":
-        navigate("/submitRequest");
-        break;
-      case "operator":
-        navigate("/operator/home");
-        break;
-      case "wardAdmin":
-      case "superAdmin":
-        navigate("/admin/home");
-        break;
-      default:
-        navigate("/");
-    }
+    if (role === "citizen") navigate("/submitRequest");
+    else if (role === "operator") navigate("/operator/home");
+    else if (role === "wardAdmin" || role === "superAdmin")
+      navigate("/admin/home");
+    else navigate("/");
   };
 
+  /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMsg("");
+    setError("");
 
-    if (!validate()) return;
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
-      const user = await login(form.email, form.password); // ✅ user object
-      redirectUser(user.role); // ✅ DIRECT ROLE
+      const user = await login(formData.email, formData.password);
+      redirectUser(user.role);
     } catch (err) {
-      setErrorMsg(err.message || "Login failed");
+      setError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -73,15 +81,15 @@ const Login = () => {
   return (
     <div className="login-form">
       <form onSubmit={handleSubmit}>
-        <h1>Welcome Back</h1>
+        <h1>Welcome back</h1>
 
-        {errorMsg && <div className="error">{errorMsg}</div>}
+        {error && <div className="error">{error}</div>}
 
         <label>Email</label>
         <input
           type="email"
           name="email"
-          value={form.email}
+          value={formData.email}
           onChange={handleChange}
         />
         {errors.email && <span className="error">{errors.email}</span>}
@@ -90,7 +98,7 @@ const Login = () => {
         <input
           type="password"
           name="password"
-          value={form.password}
+          value={formData.password}
           onChange={handleChange}
         />
         {errors.password && <span className="error">{errors.password}</span>}
@@ -100,7 +108,8 @@ const Login = () => {
         </button>
 
         <p>
-          Don’t have an account? <NavLink to="/register">Register</NavLink>
+          Don’t have an account?{" "}
+          <NavLink to="/register">Register here</NavLink>
         </p>
       </form>
     </div>
