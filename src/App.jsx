@@ -1,24 +1,23 @@
 import React from "react";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Navbar from "./pages/Navbar";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 
-import SubmitRequest from "./pages/Citizen/submitRequest";
-import AdminHome from "./pages/Admin/adminHome";
-import OperatorHome from "./pages/Operator/operatorHome";
+import RaiseRequest from "./pages/Citizen/raiseRequest";
+import MyRequests from "./pages/Citizen/myRequest";
+import RequestDetails from "./pages/Citizen/requestDetails";
+
+import OperatorAssigned from "./pages/Operator/operatorAssigned";
+
 import AdminDashboard from "./pages/Admin/adminDashboard";
 import AdminAnalytics from "./pages/Admin/adminAnalytics";
+import AdminOperators from "./pages/Admin/adminOperator";
 
 import CommunityList from "./pages/Community/communityList";
 import CommunityDetails from "./pages/Community/communityDetails";
 import CommunityCreate from "./pages/Community/communityCreate";
-
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
 
 import { useAuth } from "./userContext/AuthContext";
 
@@ -89,44 +88,69 @@ const App = () => {
 
     /* ---------------- CITIZEN ---------------- */
     {
-      path: "/submitRequest",
-      element: isLoggedIn && user?.role === "citizen" ? (
-        <>
-          <Navbar />
-          <SubmitRequest />
-        </>
-      ) : (
-        <Navigate to="/login" replace />
-      ),
-    },
-
-    /* ---------------- OPERATOR ---------------- */
-    {
-      path: "/operator/home",
-      element: isLoggedIn && user?.role === "operator" ? (
-        <>
-          <Navbar />
-          <OperatorHome />
-        </>
-      ) : (
-        <Navigate to="/login" replace />
-      ),
-    },
-
-    /* ---------------- ADMIN ---------------- */
-    {
-      path: "/admin/home",
+      path: "/raise-request",
       element:
-        isLoggedIn &&
-        (user?.role === "wardAdmin" || user?.role === "superAdmin") ? (
+        isLoggedIn && user?.role === "citizen" ? (
           <>
             <Navbar />
-            <AdminHome />
+            <RaiseRequest />
           </>
         ) : (
           <Navigate to="/login" replace />
         ),
     },
+    {
+      path: "/my-requests",
+      element:
+        isLoggedIn && user?.role === "citizen" ? (
+          <>
+            <Navbar />
+            <MyRequests />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
+    },
+    {
+      path: "/requests/:id",
+      element:
+        isLoggedIn && user?.role === "citizen" ? (
+          <>
+            <Navbar />
+            <RequestDetails />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
+    },
+
+    /* ---------------- OPERATOR ---------------- */
+    //  {
+    //   path: "/operator/home",
+    //   element:
+    //     isLoggedIn && user?.role === "operator" ? (
+    //       <>
+    //         <Navbar />
+    //         <OperatorAssigned />
+    //       </>
+    //     ) : (
+    //       <Navigate to="/login" replace />
+    //     ),
+    // },
+    {
+      path: "/operator/assigned",
+      element:
+        isLoggedIn && user?.role === "operator" ? (
+          <>
+            <Navbar />
+            <OperatorAssigned />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
+    },
+
+    /* ---------------- ADMIN ---------------- */
     {
       path: "/admin/dashboard",
       element:
@@ -148,6 +172,19 @@ const App = () => {
           <>
             <Navbar />
             <AdminAnalytics />
+          </>
+        ) : (
+          <Navigate to="/login" replace />
+        ),
+    },
+    {
+      path: "/admin/operators",
+      element:
+        isLoggedIn &&
+        (user?.role === "wardAdmin" || user?.role === "superAdmin") ? (
+          <>
+            <Navbar />
+            <AdminOperators />
           </>
         ) : (
           <Navigate to="/login" replace />

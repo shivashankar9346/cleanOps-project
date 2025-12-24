@@ -1,0 +1,131 @@
+/* Container */
+.my-requests {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.my-requests .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.my-requests .header h1 {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.my-requests .header .btn {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.my-requests .header .btn:hover {
+  background-color: #45a049;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 2rem 0;
+  color: #555;
+}
+
+.empty a {
+  color: #4caf50;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* Table styles */
+.my-requests table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.my-requests th,
+.my-requests td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.my-requests th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Row hover */
+.my-requests tbody tr:hover {
+  background-color: #f1f7f9;
+}
+
+/* Status badges */
+.status {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+/* Example status colors */
+.status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status.inprogress {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status.rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Action link */
+.my-requests td a {
+  color: #4caf50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.my-requests td a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .my-requests .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .my-requests table,
+  .my-requests th,
+  .my-requests td {
+    font-size: 0.9rem;
+  }
+}

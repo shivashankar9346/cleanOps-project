@@ -1,137 +1,117 @@
-/* ROOT FORM */
+/* FORM CONTAINER */
 .community-create {
-  max-width: 900px;
+  max-width: 800px;
   margin: 40px auto;
-  padding: 32px;
-  background: #0f172a;
-  border-radius: 14px;
-  color: #e5e7eb;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  padding: 20px;              /* ✅ inside padding */
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
 }
 
 /* TITLE */
 .community-create h1 {
   text-align: center;
-  font-size: 1.9rem;
-  font-weight: 600;
-  color: #38bdf8;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
+  color: #2563eb;
 }
 
-/* ALERTS */
-.community-create .success {
-  background: #064e3b;
-  color: #6ee7b7;
-  padding: 14px;
-  border-radius: 8px;
+/* SUCCESS / ERROR */
+.community-create .success,
+.community-create .error {
+  padding: 12px;
+  border-radius: 6px;
   margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.community-create .success {
+  background: #dcfce7;
+  color: #166534;
 }
 
 .community-create .error {
-  background: #7f1d1d;
-  color: #fecaca;
-  padding: 14px;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
-/* INPUTS */
+/* 🔥 BASE INPUT STYLING — SAME WIDTH */
 .community-create input,
 .community-create textarea,
 .community-create select {
-  width: 100%;
-  padding: 12px 14px;
-  background: #020617;
-  border: 1px solid #1e293b;
-  border-radius: 8px;
-  color: #e5e7eb;
+  width: 100%;                 /* ✅ SAME WIDTH */
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
   font-size: 0.95rem;
-  margin-bottom: 14px;
+  box-sizing: border-box;
 }
 
-/* PLACEHOLDER */
-.community-create input::placeholder,
-.community-create textarea::placeholder {
-  color: #94a3b8;
+/* SPACING BETWEEN FIELDS */
+.community-create input,
+.community-create textarea,
+.community-create select,
+.community-create input[type="file"] {
+  margin-bottom: 18px;
 }
 
-/* FOCUS */
-.community-create input:focus,
-.community-create textarea:focus,
-.community-create select:focus {
-  outline: none;
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 1px #38bdf8;
+/* TEXTAREA */
+.community-create textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
-/* DESCRIPTION COUNTER */
+/* CHAR COUNT */
 .community-create small {
   display: block;
   text-align: right;
   font-size: 0.8rem;
-  margin-top: -6px;
   margin-bottom: 18px;
-  color: #94a3b8;
+  color: #6b7280;
 }
 
-/* GRID LAYOUT */
+/* 🔥 FLEX ROW FOR SIDE-BY-SIDE */
 .community-create .grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;                  /* ✅ EXACT GAP */
+}
+
+/* each field takes half width */
+.community-create .grid input,
+.community-create .grid select {
+  flex: 1 1 calc(50% - 10px);
 }
 
 /* FILE INPUT */
 .community-create input[type="file"] {
+  background: #f9fafb;
+  border: 1px dashed #9ca3af;
   padding: 12px;
-  border: 1px dashed #334155;
-  background: #020617;
-  cursor: pointer;
-}
-
-/* FILE BUTTON */
-.community-create input[type="file"]::-webkit-file-upload-button {
-  background: #1e293b;
-  color: #e5e7eb;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-.community-create input[type="file"]::-webkit-file-upload-button:hover {
-  background: #334155;
 }
 
 /* SUBMIT BUTTON */
 .community-create button {
-  margin-top: 26px;
-  width: 100%;
+  width: 100%;                /* ✅ SAME WIDTH */
   padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-  color: #020617;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .community-create button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(56, 189, 248, 0.45);
+  opacity: 0.95;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .community-create {
-    margin: 20px;
-    padding: 24px;
-  }
-
-  .community-create .grid {
-    grid-template-columns: 1fr;
+/* MOBILE */
+@media (max-width: 640px) {
+  .community-create .grid input,
+  .community-create .grid select {
+    flex: 1 1 100%;
   }
 }

@@ -61,7 +61,7 @@ const Register = () => {
 
   /* ================= REDIRECT ================= */
   const redirectUser = (role) => {
-    if (role === "citizen") navigate("/submitRequest");
+    if (role === "citizen") navigate("/raiseRequest");
     else if (role === "operator") navigate("/operator/home");
     else if (role === "wardAdmin" || role === "superAdmin")
       navigate("/admin/home");

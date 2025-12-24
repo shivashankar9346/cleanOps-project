@@ -1,0 +1,87 @@
+.operator-assigned {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  font-family: 'Arial', sans-serif;
+  color: #1f2937;
+}
+
+.operator-assigned .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.operator-assigned h1 {
+  font-size: 1.8rem;
+  color: #0ea5e9;
+}
+
+.operator-assigned .filter label {
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.operator-assigned .filter select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.operator-assigned table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.operator-assigned th,
+.operator-assigned td {
+  padding: 12px 10px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.operator-assigned th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+.operator-assigned .status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Status colors */
+.status.assigned { background: #3b82f6; }
+.status.on-the-way { background: #f59e0b; }
+.status.in-progress { background: #6366f1; }
+.status.completed { background: #16a34a; }
+.status.rejected { background: #ef4444; }
+
+.operator-assigned button {
+  margin-right: 6px;
+  margin-top: 4px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+.operator-assigned button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.operator-assigned button:nth-child(1) { background: #f59e0b; } /* On the Way */
+.operator-assigned button:nth-child(2) { background: #6366f1; } /* In Progress */
+.operator-assigned button:nth-child(3) { background: #16a34a; } /* Completed */
+.operator-assigned button:nth-child(4) { background: #ef4444; } /* Rejected */
+

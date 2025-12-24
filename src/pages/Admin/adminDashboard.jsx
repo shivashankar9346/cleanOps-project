@@ -1,190 +1,217 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { api } from "../../server/api";
-import "./adminDashboard.css";
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
-  const [summary, setSummary] = useState({
-    todayRequests: 0,
-    pending: 0,
-    completedToday: 0,
-    slaBreaches: 0,
-  });
-
-  const [requests, setRequests] = useState([]);
+  const [summary, setSummary] = useState({});
+  const [items, setItems] = useState([]);
+  const [operators, setOperators] = useState([]);
+  const [filters, setFilters] = useState({ ward: "", status: "", wasteType: "" });
+  const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [filters, setFilters] = useState({
-    ward: "All",
-    status: "All",
-    wasteType: "All",
-  });
+  // Memoized selected request
+  const selectedRequest = useMemo(
+    () => (items || []).find((r) => r._id === selectedId),
+    [selectedId, items]
+  );
 
-  /* =========================
-     Load Summary
-  ========================== */
+  // Load dashboard summary
   const loadSummary = async () => {
     try {
-      const data = await api.get("/admin/dashboard");
-      setSummary({
-        todayRequests: data?.todayRequests ?? 0,
-        pending: data?.pending ?? 0,
-        completedToday: data?.completedToday ?? 0,
-        slaBreaches: data?.slaBreaches ?? 0,
-      });
+      const { data } = await api.get("/admin/dashboard");
+      setSummary(data || {});
     } catch (err) {
-      console.error("Summary load failed:", err.message);
+      console.error(err);
+      setSummary({});
     }
   };
 
-  /* =========================
-     Load Requests
-  ========================== */
+  // Load requests with filters
   const loadRequests = async () => {
-    setLoading(true);
     try {
-      const query = new URLSearchParams({
-        ward: filters.ward,
-        status: filters.status,
-        wasteType: filters.wasteType,
-      }).toString();
-
-      const data = await api.get(`/admin/requests?${query}`);
-      setRequests(data?.data || data || []);
+      setLoading(true);
+      const { data } = await api.get("/requests", { params: filters });
+      const safeData = Array.isArray(data) ? data : [];
+      setItems(safeData);
+      if (!selectedId && safeData.length) setSelectedId(safeData[0]._id);
     } catch (err) {
-      console.error("Requests load failed:", err.message);
-      setRequests([]);
+      console.error(err);
+      setItems([]);
     } finally {
       setLoading(false);
     }
   };
 
-  /* =========================
-     Effects
-  ========================== */
+  // Load operators
+  const loadOperators = async () => {
+    try {
+      const { data } = await api.get("/admin/operators");
+      setOperators(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+      setOperators([]);
+    }
+  };
+
+  // Assign operator to request
+  const assignOperator = async (requestId, operatorId) => {
+    try {
+      await api.put(`/requests/${requestId}/assign`, { operatorId });
+      loadRequests();
+      loadSummary();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Update request status
+  const updateStatus = async (requestId, status) => {
+    try {
+      await api.put(`/requests/${requestId}/status`, { status });
+      loadRequests();
+      loadSummary();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Load summary and operators on mount
   useEffect(() => {
     loadSummary();
+    loadOperators();
   }, []);
 
+  // Reload requests whenever filters change
   useEffect(() => {
     loadRequests();
   }, [filters]);
 
-  /* =========================
-     Manual Refresh
-  ========================== */
-  const handleRefresh = () => {
-    loadSummary();
-    loadRequests();
-  };
-
   return (
     <div className="admin-dashboard">
-      <h2>Admin Dashboard</h2>
+      <h1>Admin Dashboard</h1>
 
-      {/* ================= SUMMARY ================= */}
-      <div className="summary-grid">
-        <div className="card">
-          <p>Today's Requests</p>
-          <h3>{summary.todayRequests}</h3>
-        </div>
-
-        <div className="card">
-          <p>Pending</p>
-          <h3>{summary.pending}</h3>
-        </div>
-
-        <div className="card">
-          <p>Completed Today</p>
-          <h3>{summary.completedToday}</h3>
-        </div>
-
-        <div className="card danger">
-          <p>SLA Breaches</p>
-          <h3>{summary.slaBreaches}</h3>
-        </div>
+      {/* Summary Cards */}
+      <div className="summary-cards">
+        <div>Today's Requests: {summary.today || 0}</div>
+        <div>Pending: {summary.pending || 0}</div>
+        <div>Completed Today: {summary.completedToday || 0}</div>
+        <div>SLA Breaches: {summary.slaBreaches || 0}</div>
       </div>
 
-      {/* ================= FILTERS ================= */}
+      {/* Filters */}
       <div className="filters">
-        <select
+        <input
+          placeholder="Ward"
           value={filters.ward}
-          onChange={(e) =>
-            setFilters({ ...filters, ward: e.target.value })
-          }
-        >
-          <option value="All">All Wards</option>
-          <option value="1">Ward 1</option>
-          <option value="2">Ward 2</option>
-          <option value="3">Ward 3</option>
-          <option value="4">Ward 4</option>
-          <option value="5">Ward 5</option>
-        </select>
-
+          onChange={(e) => setFilters({ ...filters, ward: e.target.value })}
+        />
         <select
           value={filters.status}
-          onChange={(e) =>
-            setFilters({ ...filters, status: e.target.value })
-          }
+          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
         >
-          <option value="All">All Status</option>
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
+          <option value="">All Status</option>
+          <option>Assigned</option>
+          <option>On the Way</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+          <option>Rejected</option>
         </select>
-
         <select
           value={filters.wasteType}
-          onChange={(e) =>
-            setFilters({ ...filters, wasteType: e.target.value })
-          }
+          onChange={(e) => setFilters({ ...filters, wasteType: e.target.value })}
         >
-          <option value="All">All Waste Types</option>
-          <option value="Household">Household</option>
-          <option value="Sewage">Sewage</option>
-          <option value="Industrial">Industrial</option>
-          <option value="Other">Other</option>
+          <option value="">All Waste Types</option>
+          <option>Sewage</option>
+          <option>Household</option>
+          <option>Industrial</option>
+          <option>Other</option>
         </select>
-
-        <button onClick={handleRefresh}>Refresh</button>
       </div>
 
-      {/* ================= TABLE ================= */}
-      {loading ? (
-        <p>Loading requests...</p>
-      ) : requests.length === 0 ? (
-        <p>No requests found</p>
-      ) : (
-        <table className="requests-table">
-          <thead>
-            <tr>
-              <th>Ticket</th>
-              <th>Citizen</th>
-              <th>Ward</th>
-              <th>Waste Type</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {requests.map((req) => (
-              <tr key={req._id}>
-                <td>{req.ticketId || "—"}</td>
-                <td>{req.fullName || req.name || "—"}</td>
-                <td>{req.ward}</td>
-                <td>{req.wasteType}</td>
-                <td>
-                  <span
-                    className={`status ${
-                      req.status ? req.status.toLowerCase() : ""
-                    }`}
+      {/* Split Layout */}
+      <div className="split-layout">
+        {/* Left Table */}
+        <div className="requests-table">
+          {loading ? (
+            <p>Loading...</p>
+          ) : (items || []).length === 0 ? (
+            <p>No requests found</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Citizen</th>
+                  <th>Ward</th>
+                  <th>Waste</th>
+                  <th>Status</th>
+                  <th>Assigned</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(items || []).map((req) => (
+                  <tr
+                    key={req._id}
+                    className={req._id === selectedId ? "active" : ""}
+                    onClick={() => setSelectedId(req._id)}
                   >
-                    {req.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                    <td>{req.ticketId}</td>
+                    <td>{req.citizenName}</td>
+                    <td>{req.ward}</td>
+                    <td>{req.wasteType}</td>
+                    <td>{req.status}</td>
+                    <td>{req.operator?.name || "Not Assigned"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Right Details */}
+        <div className="request-details">
+          {!selectedRequest ? (
+            <p>Select a request to view details</p>
+          ) : (
+            <>
+              <h2>Ticket: {selectedRequest.ticketId}</h2>
+              <p>Status: {selectedRequest.status}</p>
+              <p>Citizen: {selectedRequest.citizenName}</p>
+              <p>Ward: {selectedRequest.ward}</p>
+              <p>Waste Type: {selectedRequest.wasteType}</p>
+              <p>Preferred Slot: {selectedRequest.timeSlot}</p>
+              <p>Address: {selectedRequest.address}</p>
+              <p>Description: {selectedRequest.description}</p>
+
+              <label>Assign Operator</label>
+              <select
+                onChange={(e) => assignOperator(selectedRequest._id, e.target.value)}
+                value={selectedRequest.operator?._id || ""}
+              >
+                <option value="">Select</option>
+                {(operators || []).map((op) => (
+                  <option key={op._id} value={op._id}>
+                    {op.name} ({op.ward})
+                  </option>
+                ))}
+              </select>
+
+              <label>Update Status</label>
+              <select
+                onChange={(e) => updateStatus(selectedRequest._id, e.target.value)}
+                value={selectedRequest.status || ""}
+              >
+                <option>Assigned</option>
+                <option>On the Way</option>
+                <option>In Progress</option>
+                <option>Completed</option>
+                <option>Rejected</option>
+              </select>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

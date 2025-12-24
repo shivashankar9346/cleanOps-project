@@ -61,6 +61,7 @@ const CommunityCreate = () => {
       {msg && <div className="success">{msg}</div>}
       {error && <div className="error">{error}</div>}
 
+      {/* FULL WIDTH */}
       <input
         name="title"
         placeholder="Title"
@@ -78,20 +79,24 @@ const CommunityCreate = () => {
       />
       <small>{form.description.length}/{descriptionMax}</small>
 
+      {/* GRID — SIDE BY SIDE */}
       <div className="grid">
         <input name="ward" placeholder="Ward" required onChange={onChange} />
         <select name="wasteType" onChange={onChange}>
-          <option>household</option>
-          <option>sewage</option>
-          <option>industrial</option>
-          <option>other</option>
+          <option value="household">Household</option>
+          <option value="sewage">Sewage</option>
+          <option value="industrial">Industrial</option>
+          <option value="other">Other</option>
         </select>
+
         <input name="address" placeholder="Address" onChange={onChange} />
         <input name="lat" placeholder="Latitude" onChange={onChange} />
+
         <input name="lng" placeholder="Longitude" onChange={onChange} />
         <input type="date" name="targetDate" onChange={onChange} />
       </div>
 
+      {/* FULL WIDTH */}
       <input
         type="file"
         multiple
