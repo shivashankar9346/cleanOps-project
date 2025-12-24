@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../server/api";
-import "./AdminDashboard.css";
+import "./adminDashboard.css";
 
 const AdminDashboard = () => {
   const [summary, setSummary] = useState({
