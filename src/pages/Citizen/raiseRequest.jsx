@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { api } from "../../server/api";
 import "./raiseRequest.css";
 
-const raiseRequest = () => {
+const RaiseRequest = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -20,18 +19,15 @@ const raiseRequest = () => {
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
 
-  // 🔹 Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  // 🔹 Handle photos
   const handlePhotos = (e) => {
-    setPhotos(Array.from(e.target.files));
+    setPhotos([...e.target.files]);
   };
 
-  // 🔹 Validation
   const validateForm = () => {
     if (!formData.fullName.trim()) return "Full Name is required";
     if (!/^\d{10}$/.test(formData.phone)) return "Enter valid 10-digit phone";
@@ -40,7 +36,6 @@ const raiseRequest = () => {
     return null;
   };
 
-  // 🔹 Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -56,16 +51,29 @@ const raiseRequest = () => {
       setLoading(true);
 
       const payload = new FormData();
-      Object.entries(formData).forEach(([key, value]) =>
-        payload.append(key, value)
+      Object.entries(formData).forEach(([k, v]) =>
+        payload.append(k, v)
       );
-      photos.forEach((photo) => payload.append("photos", photo));
+      photos.forEach((p) => payload.append("photos", p));
 
-      const res = await api.post("/requests", payload, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("/api/requests", {
+        method: "POST",
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: payload,
       });
 
-      setMsg(`Request submitted successfully. Ticket ID: ${res.data.ticketId}`);
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Request failed");
+      }
+
+      const data = await response.json();
+
+      setMsg(`Request submitted successfully. Ticket ID: ${data.ticketId}`);
 
       setFormData({
         fullName: "",
@@ -80,7 +88,7 @@ const raiseRequest = () => {
       });
       setPhotos([]);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to submit request");
+      setError(err.message || "Failed to submit request");
     } finally {
       setLoading(false);
     }
@@ -89,91 +97,38 @@ const raiseRequest = () => {
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
-  <h1>Raise Desludging Request</h1>
-  <p>Fill in the details below to raise a request.</p>
+        <h1>Raise Desludging Request</h1>
 
-  {msg && <div className="success">{msg}</div>}
-  {error && <div className="error">{error}</div>}
+        {msg && <div className="success">{msg}</div>}
+        {error && <div className="error">{error}</div>}
 
-  <div className="form-row">
-    <div className="field">
-      <label>Full Name *</label>
-      <input name="fullName" value={formData.fullName} onChange={handleChange} />
-    </div>
+        <input name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleChange} />
+        <input name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} />
+        <input name="ward" placeholder="Ward" value={formData.ward} onChange={handleChange} />
+        <input name="address" placeholder="Address" value={formData.address} onChange={handleChange} />
 
-    <div className="field">
-      <label>Mobile Number *</label>
-      <input name="phone" value={formData.phone} onChange={handleChange} />
-    </div>
-  </div>
+        <select name="wasteType" value={formData.wasteType} onChange={handleChange}>
+          <option>Sewage</option>
+          <option>Household</option>
+          <option>Industrial</option>
+          <option>Other</option>
+        </select>
 
-  <div className="form-row">
-    <div className="field">
-      <label>Ward *</label>
-      <input name="ward" value={formData.ward} onChange={handleChange} />
-    </div>
+        <input type="file" multiple accept="image/*" onChange={handlePhotos} />
 
-    <div className="field">
-      <label>Waste Type</label>
-      <select name="wasteType" value={formData.wasteType} onChange={handleChange}>
-        <option>Sewage</option>
-        <option>Household</option>
-        <option>Industrial</option>
-        <option>Other</option>
-      </select>
-    </div>
-  </div>
+        <textarea
+          name="description"
+          value={formData.description}
+          maxLength={600}
+          onChange={handleChange}
+        />
 
-  <div className="form-row">
-    <div className="field">
-      <label>Preferred Time Slot</label>
-      <input name="timeSlot" value={formData.timeSlot} onChange={handleChange} />
-    </div>
-
-    <div className="field">
-      <label>Latitude</label>
-      <input name="latitude" value={formData.latitude} onChange={handleChange} />
-    </div>
-  </div>
-
-  <div className="form-row">
-    <div className="field">
-      <label>Longitude</label>
-      <input name="longitude" value={formData.longitude} onChange={handleChange} />
-    </div>
-
-     <div className="field">
-    <label>Address *</label>
-    <input name="address" value={formData.address} onChange={handleChange} />
-  </div>
-
-  </div>
-
-    <div className="field">
-      <label>Upload Photos</label>
-      <input type="file" multiple accept="image/*" onChange={handlePhotos} />
-    </div>
-
- 
-
-  <div className="field">
-    <label>Description</label>
-    <textarea
-      name="description"
-      value={formData.description}
-      maxLength={600}
-      onChange={handleChange}
-    />
-    <small>{formData.description.length}/600</small>
-  </div>
-
-  <button disabled={loading}>
-    {loading ? "Submitting..." : "Submit Request"}
-  </button>
-</form>
-
+        <button disabled={loading}>
+          {loading ? "Submitting..." : "Submit Request"}
+        </button>
+      </form>
     </div>
   );
 };
 
-export default raiseRequest;
+export default RaiseRequest;
