@@ -10,9 +10,9 @@ import OperatorHome from "./pages/Operator/operatorHome";
 import AdminDashboard from "./pages/Admin/adminDashboard";
 import AdminAnalytics from "./pages/Admin/adminAnalytics";
 
-import CommunityList from "./pages/community/CommunityList";
-import CommunityDetails from "./pages/community/CommunityDetails";
-import CommunityCreate from "./pages/community/CommunityCreate";
+import CommunityList from "./pages/Community/communityList";
+import CommunityDetails from "./pages/Community/communityDetails";
+import CommunityCreate from "./pages/Community/communityCreate";
 
 import {
   createBrowserRouter,
