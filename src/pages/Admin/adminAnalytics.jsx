@@ -13,7 +13,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import{api} from "../../server/api";
-import "./AdminAnalytics.css";
+import "./adminAnalytics.css";
 
 const AdminAnalytics = () => {
   const [data, setData] = useState(null);
