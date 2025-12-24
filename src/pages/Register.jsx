@@ -1,7 +1,6 @@
-// src/pages/Register.jsx
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../userContext/AuthContext"; // ✅ corrected path
+import { useAuth } from "../userContext/AuthContext";
 import "./Register.css";
 
 const Register = () => {
@@ -21,64 +20,39 @@ const Register = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /* ================= CHANGE HANDLER ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setForm((prev) => ({ ...prev, [name]: value }));
-
-    // clear field error
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-
-    // clear global error
-    if (error) setError("");
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setError("");
   };
 
-  /* ================= VALIDATION ================= */
   const validate = () => {
-    const newErrors = {};
-
-    if (!form.name.trim()) newErrors.name = "Name is required";
-
-    if (!form.email.trim())
-      newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.email))
-      newErrors.email = "Invalid email format";
-
-    if (!form.password)
-      newErrors.password = "Password is required";
-    else if (form.password.length < 6)
-      newErrors.password = "Minimum 6 characters";
-
+    const e = {};
+    if (!form.name.trim()) e.name = "Name is required";
+    if (!form.email.trim()) e.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Invalid email";
+    if (!form.password || form.password.length < 6)
+      e.password = "Minimum 6 characters";
     if (form.phone && !/^\d{10}$/.test(form.phone))
-      newErrors.phone = "Phone must be 10 digits";
+      e.phone = "Phone must be 10 digits";
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  /* ================= REDIRECT ================= */
-  const redirectUser = (role) => {
-    if (role === "citizen") navigate("/raiseRequest");
-    else if (role === "operator") navigate("/operator/home");
-    else if (role === "wardAdmin" || role === "superAdmin")
-      navigate("/admin/home");
-    else navigate("/");qsd
+  const redirectUser = () => {
+    navigate("/"); // ✅ ALL roles go to home
   };
 
-  /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
     if (!validate()) return;
 
     setLoading(true);
     try {
-      const user = await register(form); // ✅ returns user
-      redirectUser(user.role);
+      await register(form);
+      redirectUser();
     } catch (err) {
       setError(err.message || "Register failed");
     } finally {
@@ -93,28 +67,18 @@ const Register = () => {
 
         {error && <div className="error">{error}</div>}
 
-        <label>Name</label>
-        <input name="name" value={form.name} onChange={handleChange} />
+        <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
         {errors.name && <span className="error">{errors.name}</span>}
 
-        <label>Email</label>
-        <input name="email" value={form.email} onChange={handleChange} />
+        <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
         {errors.email && <span className="error">{errors.email}</span>}
 
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          value={form.password}
-          onChange={handleChange}
-        />
+        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} />
         {errors.password && <span className="error">{errors.password}</span>}
 
-        <label>Phone (optional)</label>
-        <input name="phone" value={form.phone} onChange={handleChange} />
+        <input name="phone" placeholder="Phone (optional)" value={form.phone} onChange={handleChange} />
         {errors.phone && <span className="error">{errors.phone}</span>}
 
-        <label>Role</label>
         <select name="role" value={form.role} onChange={handleChange}>
           <option value="citizen">Citizen</option>
           <option value="operator">Operator</option>
@@ -122,8 +86,7 @@ const Register = () => {
           <option value="superAdmin">Super Admin</option>
         </select>
 
-        <label>Ward (optional)</label>
-        <input name="ward" value={form.ward} onChange={handleChange} />
+        <input name="ward" placeholder="Ward (optional)" value={form.ward} onChange={handleChange} />
 
         <button type="submit" disabled={loading}>
           {loading ? "Registering..." : "Register"}
