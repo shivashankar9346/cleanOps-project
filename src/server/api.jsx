@@ -1,13 +1,21 @@
-export const API_BASE_URL = "/api";
+export const API_BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "https://cleanops-efficient-operations-for-clean.onrender.com/api"
+    : "/api";
+
 
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem("token");
 
   const headers = {
-    "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
+
+  // ✅ Add Content-Type ONLY if body exists
+  if (options.body) {
+    headers["Content-Type"] = "application/json";
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,

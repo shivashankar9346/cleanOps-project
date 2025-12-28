@@ -1,16 +1,18 @@
+// src/pages/citizen/RaiseRequest.jsx
 import React, { useState } from "react";
+import { api } from "../../server/api";
 import "./raiseRequest.css";
 
 const RaiseRequest = () => {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     fullName: "",
-    phone: "",
+    mobileNumber: "",
     ward: "",
-    wasteType: "Sewage",
-    timeSlot: "",
     address: "",
-    latitude: "",
-    longitude: "",
+    lat: "",
+    lng: "",
+    wasteType: "household",
+    preferredTimeSlot: "",
     description: "",
   });
 
@@ -19,29 +21,36 @@ const RaiseRequest = () => {
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
 
+  const DESCRIPTION_MAX = 600;
+
+  /* ================= CHANGE HANDLER ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  /* ================= FILE HANDLER ================= */
   const handlePhotos = (e) => {
-    setPhotos([...e.target.files]);
+    setPhotos(Array.from(e.target.files));
   };
 
-  const validateForm = () => {
-    if (!formData.fullName.trim()) return "Full Name is required";
-    if (!/^\d{10}$/.test(formData.phone)) return "Enter valid 10-digit phone";
-    if (!formData.ward.trim()) return "Ward is required";
-    if (!formData.address.trim()) return "Address is required";
+  /* ================= VALIDATION ================= */
+  const validate = () => {
+    if (!form.fullName.trim()) return "Full Name is required";
+    if (!/^\d{10}$/.test(form.mobileNumber))
+      return "Enter valid 10-digit mobile number";
+    if (!form.ward.trim()) return "Ward is required";
+    if (!form.address.trim()) return "Address is required";
     return null;
   };
 
+  /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
     setError("");
 
-    const err = validateForm();
+    const err = validate();
     if (err) {
       setError(err);
       return;
@@ -51,39 +60,24 @@ const RaiseRequest = () => {
       setLoading(true);
 
       const payload = new FormData();
-      Object.entries(formData).forEach(([k, v]) =>
-        payload.append(k, v)
+      Object.entries(form).forEach(([key, value]) =>
+        payload.append(key, value)
       );
       photos.forEach((p) => payload.append("photos", p));
 
-      const token = localStorage.getItem("token");
+      const res = await api.post("/requests", payload);
 
-      const response = await fetch("/api/requests", {
-        method: "POST",
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: payload,
-      });
+      setMsg(`Request submitted successfully. Ticket ID: ${res.ticketId}`);
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || "Request failed");
-      }
-
-      const data = await response.json();
-
-      setMsg(`Request submitted successfully. Ticket ID: ${data.ticketId}`);
-
-      setFormData({
+      setForm({
         fullName: "",
-        phone: "",
+        mobileNumber: "",
         ward: "",
-        wasteType: "Sewage",
-        timeSlot: "",
         address: "",
-        latitude: "",
-        longitude: "",
+        lat: "",
+        lng: "",
+        wasteType: "househld",
+        preferredTimeSlot: "",
         description: "",
       });
       setPhotos([]);
@@ -98,30 +92,83 @@ const RaiseRequest = () => {
     <div className="form-container">
       <form onSubmit={handleSubmit}>
         <h1>Raise Desludging Request</h1>
+        <p>Fill in the details below to raise a request.</p>
 
         {msg && <div className="success">{msg}</div>}
         {error && <div className="error">{error}</div>}
 
-        <input name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleChange} />
-        <input name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} />
-        <input name="ward" placeholder="Ward" value={formData.ward} onChange={handleChange} />
-        <input name="address" placeholder="Address" value={formData.address} onChange={handleChange} />
+        <input
+          name="fullName"
+          placeholder="Full Name *"
+          value={form.fullName}
+          onChange={handleChange}
+        />
 
-        <select name="wasteType" value={formData.wasteType} onChange={handleChange}>
-          <option>Sewage</option>
-          <option>Household</option>
-          <option>Industrial</option>
-          <option>Other</option>
+        <input
+          name="mobileNumber"
+          placeholder="Mobile Number *"
+          value={form.mobileNumber}
+          onChange={handleChange}
+        />
+
+        <input
+          name="ward"
+          placeholder="Ward *"
+          value={form.ward}
+          onChange={handleChange}
+        />
+
+        <select
+          name="wasteType"
+          value={form.wasteType}
+          onChange={handleChange}
+        >
+          <option value="household">Household</option>
+          <option value="sewage">Sewage</option>
+          <option value="industrial">Industrial</option>
+          <option value="other">Other</option>
         </select>
 
-        <input type="file" multiple accept="image/*" onChange={handlePhotos} />
+        <input
+          name="preferredTimeSlot"
+          placeholder="Preferred Time Slot"
+          value={form.preferredTimeSlot}
+          onChange={handleChange}
+        />
+
+        <input
+          name="lat"
+          placeholder="Latitude"
+          value={form.lat}
+          onChange={handleChange}
+        />
+
+        <input
+          name="lng"
+          placeholder="Longitude"
+          value={form.lng}
+          onChange={handleChange}
+        />
+
+        <input
+          name="address"
+          placeholder="Address *"
+          value={form.address}
+          onChange={handleChange}
+        />
 
         <textarea
           name="description"
-          value={formData.description}
-          maxLength={600}
+          placeholder="Description"
+          value={form.description}
+          maxLength={DESCRIPTION_MAX}
           onChange={handleChange}
         />
+        <small>
+          {form.description.length}/{DESCRIPTION_MAX}
+        </small>
+
+        <input type="file" multiple accept="image/*" onChange={handlePhotos} />
 
         <button disabled={loading}>
           {loading ? "Submitting..." : "Submit Request"}

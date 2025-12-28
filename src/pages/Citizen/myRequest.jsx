@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../server/api";
@@ -11,7 +12,7 @@ const MyRequests = () => {
     const load = async () => {
       try {
         const res = await api.get("/requests");
-        setItems(res.data.data || []);
+        setItems(res.data || []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -55,7 +56,7 @@ const MyRequests = () => {
                 <td>{r.ward}</td>
                 <td>{r.wasteType}</td>
                 <td>
-                  <span className={`status ${r.status.toLowerCase()}`}>
+                  <span className={`status ${r.status?.toLowerCase()}`}>
                     {r.status}
                   </span>
                 </td>
