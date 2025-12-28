@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../server/api";
-import "./RequestDetails.css";
+import "./requestDetails.css";
 
 const RequestDetails = () => {
   const { id } = useParams();
