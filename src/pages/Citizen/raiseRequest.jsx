@@ -8,11 +8,11 @@ const RaiseRequest = () => {
     fullName: "",
     mobileNumber: "",
     ward: "",
-    address: "",
-    lat: "",
-    lng: "",
     wasteType: "household",
     preferredTimeSlot: "",
+    lat: "",
+    lng: "",
+    address: "",
     description: "",
   });
 
@@ -23,66 +23,43 @@ const RaiseRequest = () => {
 
   const DESCRIPTION_MAX = 600;
 
-  /* ================= CHANGE HANDLER ================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((p) => ({ ...p, [name]: value }));
   };
 
-  /* ================= FILE HANDLER ================= */
   const handlePhotos = (e) => {
-    setPhotos(Array.from(e.target.files));
+    setPhotos([...e.target.files]);
   };
 
-  /* ================= VALIDATION ================= */
-  const validate = () => {
-    if (!form.fullName.trim()) return "Full Name is required";
-    if (!/^\d{10}$/.test(form.mobileNumber))
-      return "Enter valid 10-digit mobile number";
-    if (!form.ward.trim()) return "Ward is required";
-    if (!form.address.trim()) return "Address is required";
-    return null;
-  };
-
-  /* ================= SUBMIT ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMsg("");
+    setLoading(true);
     setError("");
-
-    const err = validate();
-    if (err) {
-      setError(err);
-      return;
-    }
+    setMsg("");
 
     try {
-      setLoading(true);
-
       const payload = new FormData();
-      Object.entries(form).forEach(([key, value]) =>
-        payload.append(key, value)
-      );
+      Object.entries(form).forEach(([k, v]) => payload.append(k, v));
       photos.forEach((p) => payload.append("photos", p));
 
-      const res = await api.post("/requests", payload);
-
-      setMsg(`Request submitted successfully. Ticket ID: ${res.ticketId}`);
+      await api.post("/requests", payload);
+      setMsg("Request submitted successfully");
 
       setForm({
         fullName: "",
         mobileNumber: "",
         ward: "",
-        address: "",
+        wasteType: "household",
+        preferredTimeSlot: "",
         lat: "",
         lng: "",
-        wasteType: "househld",
-        preferredTimeSlot: "",
+        address: "",
         description: "",
       });
       setPhotos([]);
     } catch (err) {
-      setError(err.message || "Failed to submit request");
+      setError("Failed to submit request");
     } finally {
       setLoading(false);
     }
@@ -90,85 +67,105 @@ const RaiseRequest = () => {
 
   return (
     <div className="form-container">
-      <form onSubmit={handleSubmit}>
+      <form className="request-form" onSubmit={handleSubmit}>
         <h1>Raise Desludging Request</h1>
-        <p>Fill in the details below to raise a request.</p>
+        <p>Fill in the details below. Accurate address 
+          and a short description helps us serve you faster.</p>
 
         {msg && <div className="success">{msg}</div>}
         {error && <div className="error">{error}</div>}
 
-        <input
-          name="fullName"
-          placeholder="Full Name *"
-          value={form.fullName}
-          onChange={handleChange}
-        />
+        <div className="grid">
+          <div className="field">
+            <label>Full Name</label>
+            <input name="fullName"
+             value={form.fullName}
+              onChange={handleChange} 
+              placeholder="e.g. Shiva Shankar Kotte"/>
+          </div>
 
-        <input
-          name="mobileNumber"
-          placeholder="Mobile Number *"
-          value={form.mobileNumber}
-          onChange={handleChange}
-        />
+          <div className="field">
+            <label>Mobile Number</label>
+            <input name="mobileNumber"
+             value={form.mobileNumber}
+              onChange={handleChange}
+              placeholder="10-digit Number" />
+          </div>
 
-        <input
-          name="ward"
-          placeholder="Ward *"
-          value={form.ward}
-          onChange={handleChange}
-        />
+          <div className="field">
+            <label>Ward</label>
+            <input name="ward"
+             value={form.ward}
+              onChange={handleChange} 
+              placeholder="e.g.5"/>
+          </div>
 
-        <select
-          name="wasteType"
-          value={form.wasteType}
-          onChange={handleChange}
-        >
-          <option value="household">Household</option>
-          <option value="sewage">Sewage</option>
-          <option value="industrial">Industrial</option>
-          <option value="other">Other</option>
-        </select>
+          <div className="field">
+            <label>Waste Type</label>
+            <select name="wasteType" value={form.wasteType} onChange={handleChange}>
+              <option value="household">Household</option>
+              <option value="sewage">Sewage</option>
+              <option value="industrial">Industrial</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
 
-        <input
-          name="preferredTimeSlot"
-          placeholder="Preferred Time Slot"
-          value={form.preferredTimeSlot}
-          onChange={handleChange}
-        />
+          <div className="field">
+            <label>Preferred Time Slot</label>
+            <input
+              name="preferredTimeSlot"
+              value={form.preferredTimeSlot}
+              onChange={handleChange}
+              placeholder="e.g. 9:00AM -12:00PM"
+            />
+          </div>
 
-        <input
-          name="lat"
-          placeholder="Latitude"
-          value={form.lat}
-          onChange={handleChange}
-        />
+             <div className="field">
+            <label>Address</label>
+            <input name="address"
+             value={form.address}
+              onChange={handleChange}
+              placeholder="House No,Street,Area" />
+          </div>
 
-        <input
-          name="lng"
-          placeholder="Longitude"
-          value={form.lng}
-          onChange={handleChange}
-        />
+          <div className="field">
+            <label>Latitude</label>
+            <input name="lat"
+             value={form.lat}
+             onChange={handleChange}
+             placeholder="e.g. 19.505"
+             />
+          </div>
 
-        <input
-          name="address"
-          placeholder="Address *"
-          value={form.address}
-          onChange={handleChange}
-        />
+          <div className="field">
+            <label>Longitude</label>
+            <input name="lng"
+             value={form.lng}
+              onChange={handleChange}
+              placeholder="72.877" />
+          </div>
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          maxLength={DESCRIPTION_MAX}
-          onChange={handleChange}
-        />
-        <small>
-          {form.description.length}/{DESCRIPTION_MAX}
-        </small>
+       
 
-        <input type="file" multiple accept="image/*" onChange={handlePhotos} />
+          {/* ONLY THESE TWO ARE FULL WIDTH */}
+          <div className="field full">
+            <label>Description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              maxLength={DESCRIPTION_MAX}
+              onChange={handleChange}
+              placeholder="Briefly describe the issue ..."
+            />
+            <small>{form.description.length}/{DESCRIPTION_MAX}</small>
+            <p>Avoid personal information. You can attach images below.</p>
+          </div>
+
+          <div className="field full">
+            <label>Upload Photos</label>
+            <input type="file" multiple accept="image/*" onChange={handlePhotos} />
+          </div>
+        </div>
 
         <button disabled={loading}>
           {loading ? "Submitting..." : "Submit Request"}

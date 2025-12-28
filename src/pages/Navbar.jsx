@@ -33,7 +33,6 @@ const Navbar = () => {
           Community
         </NavLink>
 
-        {/* CITIZEN */}
         {role === "citizen" && (
           <>
             <NavLink to="/raise-request" className="nav-item">
@@ -45,14 +44,12 @@ const Navbar = () => {
           </>
         )}
 
-        {/* OPERATOR */}
         {role === "operator" && (
           <NavLink to="/operator/assigned" className="nav-item">
             Assigned
           </NavLink>
         )}
 
-        {/* ADMIN */}
         {(role === "wardAdmin" || role === "superAdmin") && (
           <>
             <NavLink to="/admin/dashboard" className="nav-item">
@@ -68,7 +65,7 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* AUTH SECTION */}
+      {/* AUTH */}
       <div className="auth-links">
         {!user ? (
           <>
@@ -81,10 +78,12 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <span className="user-info">
-              Welcome, {user.name}
-            </span>
-            <button onClick={handleLogout} className="nav-item logout-btn">
+            <span className="user-info">Welcome, {user.name}</span>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="logout-btn"
+            >
               Logout
             </button>
           </>
