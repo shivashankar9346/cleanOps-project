@@ -110,7 +110,7 @@
 }
 
 .home-card button:hover {
-  background: linear-gradient(135deg, #188a54, #27ae60);
+   background: linear-gradient(135deg, #1d4ed8, #2563eb);
   box-shadow: 0 6px 18px rgba(46, 204, 113, 0.4);
 }
 
